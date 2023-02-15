@@ -1,7 +1,7 @@
 
 vscode:
   extensions:
-    - Pivotal.vscode-boot-dev-packGitpod
+    - Pivotal.vscode-boot-dev-pack
     - equinusocio.vsc-material-theme-icons
 
 # Please adjust to your needs (see https://www.gitpod.io/docs/introduction/learn-gitpod/gitpod-yaml)
