@@ -1,11 +1,13 @@
 
-vscode:
-  extensions:
-    - Pivotal.vscode-boot-dev-pack
-    - equinusocio.vsc-material-theme-icons
-
 # Please adjust to your needs (see https://www.gitpod.io/docs/introduction/learn-gitpod/gitpod-yaml)
 # and commit this file to your remote git repository to share the goodness with others.
 # Learn more from ready-to-use templates: https://www.gitpod.io/docs/introduction/getting-started/quickstart
+
+vscode:
+  extensions:
+    - vscjava.vscode-java-pack
+    - Pivotal.vscode-boot-dev-pack
+    - equinusocio.vsc-material-theme-icons
+
 # tasks:
 #   - init: ./gradlew build
