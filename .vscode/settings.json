@@ -1,4 +1,5 @@
 {
-    "workbench.colorTheme": "GitHub Dark Dimmed",
-    "workbench.iconTheme": "eq-material-theme-icons-darker",
+  "workbench.colorTheme": "GitHub Dark Dimmed",
+  "workbench.iconTheme": "eq-material-theme-icons-darker",
+  "java.compile.nullAnalysis.mode": "automatic"
 }
