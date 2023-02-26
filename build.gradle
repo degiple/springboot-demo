@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.8'
 	id 'io.spring.dependency-management' version '1.1.0'
+	id 'com.google.cloud.tools.jib' version '3.1.3'
 }
 
 group = 'com.example'
@@ -24,4 +25,25 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+jib {
+    from {
+        image = 'openjdk:11-jre-slim'
+    }
+    to {
+        image = 'myapp-gradle'
+        tags = ['latest']
+		// auth {
+        //     username = 'my-username'
+        //     password = 'my-password'
+        // }
+    }
+    container {
+        mainClass = 'com.example.demo.DemoApplication'
+        // jvmFlags = ['-Djava.security.egd=file:/dev/./urandom', '-XX:MaxRAMPercentage=75.0']
+        // args = ['--my-flag', 'value']
+        // ports = ['8080']
+        // environment = ['VAR1': 'value1', 'VAR2': 'value2']
+    }
 }
