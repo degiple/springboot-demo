@@ -1,0 +1,179 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    />
+  </head>
+
+  <body>
+    <div id="app" class="container">
+      <div class="p-3 text-center">
+        <h1>{{ appName }}</h1>
+      </div>
+      <div class="mb-3">
+        <table class="table">
+          <thead class="table-light">
+            <tr>
+              <th width="85%">タスク名</th>
+              <th>追加</th>
+            </tr>
+          </thead>
+          <tr>
+            <td>
+              <input
+                v-model="title"
+                type="text"
+                v-on:keydown.enter="addTodo(title)"
+                class="form-control"
+              />
+            </td>
+            <td>
+              <button v-on:click="addTodo" class="btn btn-primary">追加</button>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="mb-3">
+        <table class="table table-striped table-hover">
+          <thead class="table-light">
+            <tr>
+              <th width="5%">番号</th>
+              <th width="10%">完了</th>
+              <th width="50%">内容</th>
+              <th>更新</th>
+              <th>削除</th>
+            </tr>
+          </thead>
+          <tr v-for="todo in getTodo">
+            <td>{{ todo.id }}</td>
+
+            <td><input v-model="todo.completed" type="checkbox" /></td>
+
+            <td v-if="todo.isEdit">
+              <input v-model="todo.title" type="text" />
+            </td>
+            <td v-else>
+              <div v-on:click="todo.isEdit = true">{{todo.title}}</div>
+            </td>
+
+            <td>
+              <button v-on:click="updateTodo(todo)" class="btn btn-secondary">
+                更新
+              </button>
+            </td>
+            <td>
+              <button v-on:click="deleteTodo(todo.id)" class="btn btn-danger">
+                削除
+              </button>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <!-- JavaScript -->
+    <!-- <script
+      src="https://cdn.jsdelivr.net/npm/vue@3.2.29/dist/vue.global.js"
+      defer
+    ></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.2.30/vue.global.min.js"></script>
+    <script>
+      const todoapi = axios.create({
+        baseURL: "/todos",
+        timeout: 1000,
+        headers: { "Content-Type": "application/json" },
+      });
+
+      todoapi.interceptors.response.use(
+        (response) => response,
+        async (error) => {
+          switch (error.response?.status) {
+            // case 400:
+            // case 401:
+            //   alert(error);
+            //   console.log(error);
+            //   break;
+            default:
+              alert(error);
+              console.log(error);
+          }
+        }
+      );
+
+      const initdata = {
+        appName: "TODO Application",
+        todo: [],
+        title: "",
+      };
+
+      //   const { createApp, ref, computed } = Vue;
+      const app = Vue.createApp({
+        data() {
+          return initdata;
+        },
+        created() {
+          this.loadTodo(); // 読込
+        },
+        methods: {
+          loadTodo() {
+            todoapi.get("/").then((res) => {
+              console.log(res.data);
+              this.todo = this.incertIsEdit(res.data);
+            });
+          },
+          incertIsEdit(todo) {
+            for (let index = 0; index < todo.length; index++) {
+              todo[index].isEdit = false;
+            }
+            return todo;
+          },
+          addTodo() {
+            if (this.title.length > 0) {
+              todoapi
+                .post("/", {
+                  title: this.title,
+                })
+                .then((res) => {
+                  this.loadTodo();
+                });
+            }
+          },
+          updateTodo(todo) {
+            console.log("changeTodo:" + todo.id);
+            todoapi
+              .put("/" + todo.id, {
+                title: todo.title,
+                isComplete: todo.completed,
+              })
+              .then((res) => {
+                this.loadTodo();
+                alert(`番号${todo.id}を更新しました！`);
+              });
+          },
+          deleteTodo(id) {
+            console.log("deleteTodo:" + id);
+            todoapi.delete("/" + id).then((res) => {
+              this.loadTodo();
+              alert(`番号${id}を削除しました！`);
+            });
+          },
+        },
+        computed: {
+          getTodo() {
+            const arr = this.todo;
+            arr.sort((a, b) => {
+              return b.id - a.id;
+            });
+            return arr;
+          },
+        },
+      });
+      app.mount("#app");
+    </script>
+  </body>
+</html>
